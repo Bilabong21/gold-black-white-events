@@ -3,7 +3,8 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Clock, Users, ArrowLeft, Plus } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Calendar, MapPin, Clock, Users, ArrowLeft, Plus, Crown, User } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -76,6 +77,126 @@ const groupDetails = {
   // Add more group details as needed
 };
 
+// Mock data for group leaders/cabinet
+const groupLeaders = {
+  'pec-fs-nc': [
+    {
+      position: 'Chairperson',
+      name: 'Rev. Thabo Mthembu',
+      email: 'thabo.mthembu@brcsa.org',
+      phone: '+27 51 123 4567',
+      branch: 'BRCSA Bloemfontein Central'
+    },
+    {
+      position: 'Deputy Chairperson',
+      name: 'Mrs. Sarah Molefe',
+      email: 'sarah.molefe@brcsa.org',
+      phone: '+27 53 234 5678',
+      branch: 'BRCSA Kimberley North'
+    },
+    {
+      position: 'Secretary',
+      name: 'Mr. Johannes van der Merwe',
+      email: 'johannes.vdm@brcsa.org',
+      phone: '+27 51 345 6789',
+      branch: 'BRCSA Welkom'
+    },
+    {
+      position: 'Deputy Secretary',
+      name: 'Ms. Nomsa Dlamini',
+      email: 'nomsa.dlamini@brcsa.org',
+      phone: '+27 53 456 7890',
+      branch: 'BRCSA Upington'
+    },
+    {
+      position: 'Treasurer',
+      name: 'Mr. Pieter Botha',
+      email: 'pieter.botha@brcsa.org',
+      phone: '+27 51 567 8901',
+      branch: 'BRCSA Kroonstad'
+    },
+    {
+      position: 'Deputy Treasurer',
+      name: 'Mrs. Lerato Mokoena',
+      email: 'lerato.mokoena@brcsa.org',
+      phone: '+27 53 678 9012',
+      branch: 'BRCSA Kuruman'
+    },
+    {
+      position: 'Additional Member',
+      name: 'Rev. Michael Sebitso',
+      email: 'michael.sebitso@brcsa.org',
+      phone: '+27 51 789 0123',
+      branch: 'BRCSA Bethlehem'
+    },
+    {
+      position: 'Additional Member',
+      name: 'Mrs. Elizabeth Coetzee',
+      email: 'elizabeth.coetzee@brcsa.org',
+      phone: '+27 53 890 1234',
+      branch: 'BRCSA De Aar'
+    }
+  ],
+  'nec-yca-ymwca': [
+    {
+      position: 'Chairperson',
+      name: 'Mr. David Mashaba',
+      email: 'david.mashaba@brcsa.org',
+      phone: '+27 11 123 4567',
+      branch: 'BRCSA Soweto Central'
+    },
+    {
+      position: 'Deputy Chairperson',
+      name: 'Ms. Grace Nkomo',
+      email: 'grace.nkomo@brcsa.org',
+      phone: '+27 15 234 5678',
+      branch: 'BRCSA Polokwane'
+    },
+    {
+      position: 'Secretary',
+      name: 'Mr. Themba Ngwenya',
+      email: 'themba.ngwenya@brcsa.org',
+      phone: '+27 13 345 6789',
+      branch: 'BRCSA Nelspruit'
+    },
+    {
+      position: 'Deputy Secretary',
+      name: 'Ms. Precious Mthombeni',
+      email: 'precious.mthombeni@brcsa.org',
+      phone: '+27 18 456 7890',
+      branch: 'BRCSA Mahikeng'
+    },
+    {
+      position: 'Treasurer',
+      name: 'Mr. Sipho Radebe',
+      email: 'sipho.radebe@brcsa.org',
+      phone: '+27 11 567 8901',
+      branch: 'BRCSA Alexandra'
+    },
+    {
+      position: 'Deputy Treasurer',
+      name: 'Ms. Zanele Dube',
+      email: 'zanele.dube@brcsa.org',
+      phone: '+27 15 678 9012',
+      branch: 'BRCSA Tzaneen'
+    },
+    {
+      position: 'Additional Member',
+      name: 'Mr. Lucky Mhlongo',
+      email: 'lucky.mhlongo@brcsa.org',
+      phone: '+27 13 789 0123',
+      branch: 'BRCSA Barberton'
+    },
+    {
+      position: 'Additional Member',
+      name: 'Ms. Portia Moloi',
+      email: 'portia.moloi@brcsa.org',
+      phone: '+27 18 890 1234',
+      branch: 'BRCSA Rustenburg'
+    }
+  ]
+};
+
 const GroupDetail = () => {
   const { groupId } = useParams<{ groupId: string }>();
   const navigate = useNavigate();
@@ -96,6 +217,7 @@ const GroupDetail = () => {
 
   const group = groupDetails[groupId as keyof typeof groupDetails];
   const events = groupEvents[groupId as keyof typeof groupEvents] || [];
+  const leaders = groupLeaders[groupId as keyof typeof groupLeaders] || [];
 
   if (!group) {
     return (
@@ -137,6 +259,20 @@ const GroupDetail = () => {
         </div>
       </section>
 
+      {/* Post Event Call-to-Action */}
+      <section className="py-8 bg-yellow-50 border-b border-yellow-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-2xl font-bold text-black mb-2">Got an upcoming event?</h2>
+          <p className="text-gray-700 mb-4">Share it with the {group.name} community and let everyone know!</p>
+          <Link to={`/groups/${groupId}/post`}>
+            <Button className="bg-yellow-400 text-black hover:bg-yellow-500 font-semibold px-8 py-3">
+              <Plus className="h-5 w-5 mr-2" />
+              Post Your Event Now
+            </Button>
+          </Link>
+        </div>
+      </section>
+
       {/* Group Info and Events */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -166,13 +302,6 @@ const GroupDetail = () => {
                       ))}
                     </div>
                   </div>
-
-                  <Link to={`/groups/${groupId}/post`}>
-                    <Button className="w-full bg-yellow-400 text-black hover:bg-yellow-500 mt-6">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Post New Event
-                    </Button>
-                  </Link>
                 </CardContent>
               </Card>
             </div>
@@ -256,6 +385,61 @@ const GroupDetail = () => {
               )}
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Group Leadership/Cabinet Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <Crown className="h-12 w-12 text-yellow-400 mx-auto mb-4" />
+            <h2 className="text-3xl font-bold text-black mb-4">Leadership Cabinet</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Meet the dedicated leaders who guide and serve the {group.name} community
+            </p>
+          </div>
+
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-xl font-bold text-black flex items-center">
+                <User className="h-5 w-5 mr-2 text-yellow-400" />
+                Executive Committee
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="font-semibold text-black">Position</TableHead>
+                      <TableHead className="font-semibold text-black">Name</TableHead>
+                      <TableHead className="font-semibold text-black">Email</TableHead>
+                      <TableHead className="font-semibold text-black">Phone</TableHead>
+                      <TableHead className="font-semibold text-black">Branch</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {leaders.map((leader, index) => (
+                      <TableRow key={index} className="hover:bg-gray-50">
+                        <TableCell className="font-medium">
+                          <Badge 
+                            variant={leader.position === 'Chairperson' ? 'default' : 'secondary'}
+                            className={leader.position === 'Chairperson' ? 'bg-yellow-400 text-black' : ''}
+                          >
+                            {leader.position}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="font-medium text-black">{leader.name}</TableCell>
+                        <TableCell className="text-gray-600">{leader.email}</TableCell>
+                        <TableCell className="text-gray-600">{leader.phone}</TableCell>
+                        <TableCell className="text-gray-600">{leader.branch}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
