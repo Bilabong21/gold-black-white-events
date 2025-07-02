@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Upload, X } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { toast } from "@/hooks/use-toast";
@@ -15,6 +15,8 @@ const PostEvent = () => {
   const { groupId } = useParams<{ groupId: string }>();
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [selectedFlyer, setSelectedFlyer] = useState<File | null>(null);
+  const [flyerPreview, setFlyerPreview] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: '',
     date: '',
@@ -43,11 +45,40 @@ const PostEvent = () => {
     }));
   };
 
+  const handleFlyerUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.type.startsWith('image/')) {
+        setSelectedFlyer(file);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setFlyerPreview(e.target?.result as string);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        toast({
+          title: "Invalid File Type",
+          description: "Please select an image file (JPG, PNG, etc.)",
+          variant: "destructive"
+        });
+      }
+    }
+  };
+
+  const removeFlyer = () => {
+    setSelectedFlyer(null);
+    setFlyerPreview(null);
+    const fileInput = document.getElementById('flyer') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Here you would typically send the form data to your backend
-    console.log('Event posted:', { ...formData, groupId });
+    // Here you would typically send the form data and flyer to your backend
+    console.log('Event posted:', { ...formData, groupId, flyer: selectedFlyer?.name });
     
     toast({
       title: "Event Posted Successfully!",
@@ -171,6 +202,65 @@ const PostEvent = () => {
                     className="mt-2 border-gray-300 focus:border-yellow-400 focus:ring-yellow-400"
                     placeholder="Provide detailed information about the event, its purpose, agenda, and any special requirements..."
                   />
+                </div>
+
+                {/* Event Flyer Upload */}
+                <div className="border-t pt-6">
+                  <h3 className="text-lg font-semibold text-black mb-4">Event Flyer (Optional)</h3>
+                  
+                  {!flyerPreview ? (
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
+                      <div className="text-center">
+                        <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                        <div className="mt-4">
+                          <Label htmlFor="flyer" className="cursor-pointer">
+                            <span className="mt-2 block text-sm font-medium text-gray-900">
+                              Upload event flyer
+                            </span>
+                            <span className="mt-1 block text-sm text-gray-500">
+                              PNG, JPG, GIF up to 10MB
+                            </span>
+                          </Label>
+                          <Input
+                            id="flyer"
+                            name="flyer"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFlyerUpload}
+                            className="sr-only"
+                          />
+                        </div>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="mt-4"
+                          onClick={() => document.getElementById('flyer')?.click()}
+                        >
+                          Choose File
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="relative">
+                      <img
+                        src={flyerPreview}
+                        alt="Event flyer preview"
+                        className="w-full max-w-md mx-auto rounded-lg shadow-md"
+                      />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        className="absolute top-2 right-2"
+                        onClick={removeFlyer}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                      <p className="text-sm text-gray-600 mt-2 text-center">
+                        {selectedFlyer?.name}
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Contact Information */}

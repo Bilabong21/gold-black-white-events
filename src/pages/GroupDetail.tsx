@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +7,7 @@ import { Calendar, MapPin, Clock, Users, ArrowLeft, Plus } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-// Mock data for group events
+// Mock data for group events with flyers
 const groupEvents = {
   'pec-fs-nc': [
     {
@@ -18,7 +17,8 @@ const groupEvents = {
       time: "10:00 AM",
       location: "Bloemfontein Conference Hall",
       description: "Quarterly planning session for Free State and Northern Cape activities.",
-      status: "upcoming"
+      status: "upcoming",
+      flyer: "https://images.unsplash.com/photo-1524230572899-a752b3835840?w=400&h=600&fit=crop&crop=center"
     },
     {
       id: 2,
@@ -38,7 +38,8 @@ const groupEvents = {
       time: "9:00 AM",
       location: "Pretoria Convention Center",
       description: "Annual summit for young leaders to discuss ministry initiatives.",
-      status: "upcoming"
+      status: "upcoming",
+      flyer: "https://images.unsplash.com/photo-1466442929976-97f336a657be?w=400&h=600&fit=crop&crop=center"
     },
     {
       id: 4,
@@ -201,24 +202,38 @@ const GroupDetail = () => {
                         </CardDescription>
                       </CardHeader>
                       <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <div className="flex items-center text-gray-700">
-                            <Calendar className="h-4 w-4 mr-2 text-yellow-400" />
-                            <span>{new Date(event.date).toLocaleDateString('en-US', { 
-                              weekday: 'long', 
-                              year: 'numeric', 
-                              month: 'long', 
-                              day: 'numeric' 
-                            })}</span>
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                          {/* Event Details */}
+                          <div className="lg:col-span-2 space-y-3">
+                            <div className="flex items-center text-gray-700">
+                              <Calendar className="h-4 w-4 mr-2 text-yellow-400" />
+                              <span>{new Date(event.date).toLocaleDateString('en-US', { 
+                                weekday: 'long', 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric' 
+                              })}</span>
+                            </div>
+                            <div className="flex items-center text-gray-700">
+                              <Clock className="h-4 w-4 mr-2 text-yellow-400" />
+                              <span>{event.time}</span>
+                            </div>
+                            <div className="flex items-center text-gray-700">
+                              <MapPin className="h-4 w-4 mr-2 text-yellow-400" />
+                              <span>{event.location}</span>
+                            </div>
                           </div>
-                          <div className="flex items-center text-gray-700">
-                            <Clock className="h-4 w-4 mr-2 text-yellow-400" />
-                            <span>{event.time}</span>
-                          </div>
-                          <div className="flex items-center text-gray-700">
-                            <MapPin className="h-4 w-4 mr-2 text-yellow-400" />
-                            <span>{event.location}</span>
-                          </div>
+                          
+                          {/* Event Flyer */}
+                          {event.flyer && (
+                            <div className="lg:col-span-1">
+                              <img
+                                src={event.flyer}
+                                alt={`${event.title} flyer`}
+                                className="w-full h-48 object-cover rounded-lg shadow-sm"
+                              />
+                            </div>
+                          )}
                         </div>
                       </CardContent>
                     </Card>
