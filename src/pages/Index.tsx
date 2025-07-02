@@ -1,12 +1,180 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { CalendarDays, MapPin, Clock, Users, Phone, Mail } from "lucide-react";
+import { Link } from "react-router-dom";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+
+// Mock data for events
+const upcomingEvents = [
+  {
+    id: 1,
+    title: "Sunday Morning Service",
+    date: "2025-07-06",
+    time: "09:00 AM",
+    location: "Main Sanctuary",
+    description: "Join us for our weekly worship service with inspiring messages and community fellowship.",
+    group: "General"
+  },
+  {
+    id: 2,
+    title: "PEC FS/NC Youth Meeting",
+    date: "2025-07-08",
+    time: "06:00 PM",
+    location: "Youth Hall",
+    description: "Monthly gathering for youth ministry planning and fellowship activities.",
+    group: "PEC FS/NC"
+  },
+  {
+    id: 3,
+    title: "NEC SYNOD Conference",
+    date: "2025-07-12",
+    time: "10:00 AM",
+    location: "Conference Center",
+    description: "Annual synod meeting to discuss church matters and future initiatives.",
+    group: "NEC SYNOD"
+  },
+  {
+    id: 4,
+    title: "Community Outreach Program",
+    date: "2025-07-15",
+    time: "02:00 PM",
+    location: "Community Center",
+    description: "Join us in serving our local community through various outreach activities.",
+    group: "CEC"
+  }
+];
 
 const Index = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Check if user is logged in (placeholder logic)
+    const authStatus = localStorage.getItem('isAuthenticated');
+    setIsAuthenticated(authStatus === 'true');
+  }, []);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-white">
+      <Header isAuthenticated={isAuthenticated} />
+      
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-r from-black via-gray-900 to-black text-white py-20">
+        <div className="absolute inset-0 bg-black/50"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-5xl font-bold mb-6">
+            Welcome to <span className="text-yellow-400">BRCSA</span>
+          </h1>
+          <p className="text-xl mb-8 max-w-3xl mx-auto">
+            Building communities of faith, hope, and love. Join us in worship, fellowship, and service to our Lord and community.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button size="lg" className="bg-yellow-400 text-black hover:bg-yellow-500 font-semibold">
+              Join Our Community
+            </Button>
+            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-black">
+              Learn More About Us
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Upcoming Events Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-black mb-4">Upcoming Events</h2>
+            <div className="w-24 h-1 bg-yellow-400 mx-auto mb-6"></div>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Stay connected with our community through worship services, fellowship meetings, and special events.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+            {upcomingEvents.map((event) => (
+              <Card key={event.id} className="hover:shadow-lg transition-shadow duration-300 border-l-4 border-l-yellow-400">
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-xl font-semibold text-black">{event.title}</CardTitle>
+                    <span className="text-sm bg-yellow-400 text-black px-2 py-1 rounded-full font-medium">
+                      {event.group}
+                    </span>
+                  </div>
+                  <CardDescription className="text-gray-600">
+                    {event.description}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <div className="flex items-center text-gray-700">
+                      <CalendarDays className="h-4 w-4 mr-2 text-yellow-400" />
+                      <span>{new Date(event.date).toLocaleDateString('en-US', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                      })}</span>
+                    </div>
+                    <div className="flex items-center text-gray-700">
+                      <Clock className="h-4 w-4 mr-2 text-yellow-400" />
+                      <span>{event.time}</span>
+                    </div>
+                    <div className="flex items-center text-gray-700">
+                      <MapPin className="h-4 w-4 mr-2 text-yellow-400" />
+                      <span>{event.location}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <Button className="bg-black text-white hover:bg-gray-800">
+              View All Events
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Quick Info Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Users className="h-8 w-8 text-black" />
+              </div>
+              <h3 className="text-xl font-semibold text-black mb-2">Join Our Fellowship</h3>
+              <p className="text-gray-600">
+                Connect with our diverse church groups and find your place in our community of faith.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Phone className="h-8 w-8 text-black" />
+              </div>
+              <h3 className="text-xl font-semibold text-black mb-2">Get In Touch</h3>
+              <p className="text-gray-600">
+                Have questions or need prayer? Our pastoral team is here to support and guide you.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Mail className="h-8 w-8 text-black" />
+              </div>
+              <h3 className="text-xl font-semibold text-black mb-2">Stay Connected</h3>
+              <p className="text-gray-600">
+                Subscribe to our newsletter for updates on events, sermons, and community news.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
     </div>
   );
 };
