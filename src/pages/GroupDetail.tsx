@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, MapPin, Clock, Users, ArrowLeft, Plus, Crown, User } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -77,7 +78,7 @@ const groupDetails = {
   // Add more group details as needed
 };
 
-// Mock data for group leaders/cabinet
+// Mock data for group leaders/cabinet with pictures
 const groupLeaders = {
   'pec-fs-nc': [
     {
@@ -85,56 +86,64 @@ const groupLeaders = {
       name: 'Rev. Thabo Mthembu',
       email: 'thabo.mthembu@brcsa.org',
       phone: '+27 51 123 4567',
-      branch: 'BRCSA Bloemfontein Central'
+      branch: 'BRCSA Bloemfontein Central',
+      picture: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'
     },
     {
       position: 'Deputy Chairperson',
       name: 'Mrs. Sarah Molefe',
       email: 'sarah.molefe@brcsa.org',
       phone: '+27 53 234 5678',
-      branch: 'BRCSA Kimberley North'
+      branch: 'BRCSA Kimberley North',
+      picture: 'https://images.unsplash.com/photo-1494790108755-2616b612b510?w=150&h=150&fit=crop&crop=face'
     },
     {
       position: 'Secretary',
       name: 'Mr. Johannes van der Merwe',
       email: 'johannes.vdm@brcsa.org',
       phone: '+27 51 345 6789',
-      branch: 'BRCSA Welkom'
+      branch: 'BRCSA Welkom',
+      picture: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
     },
     {
       position: 'Deputy Secretary',
       name: 'Ms. Nomsa Dlamini',
       email: 'nomsa.dlamini@brcsa.org',
       phone: '+27 53 456 7890',
-      branch: 'BRCSA Upington'
+      branch: 'BRCSA Upington',
+      picture: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face'
     },
     {
       position: 'Treasurer',
       name: 'Mr. Pieter Botha',
       email: 'pieter.botha@brcsa.org',
       phone: '+27 51 567 8901',
-      branch: 'BRCSA Kroonstad'
+      branch: 'BRCSA Kroonstad',
+      picture: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face'
     },
     {
       position: 'Deputy Treasurer',
       name: 'Mrs. Lerato Mokoena',
       email: 'lerato.mokoena@brcsa.org',
       phone: '+27 53 678 9012',
-      branch: 'BRCSA Kuruman'
+      branch: 'BRCSA Kuruman',
+      picture: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face'
     },
     {
       position: 'Additional Member',
       name: 'Rev. Michael Sebitso',
       email: 'michael.sebitso@brcsa.org',
       phone: '+27 51 789 0123',
-      branch: 'BRCSA Bethlehem'
+      branch: 'BRCSA Bethlehem',
+      picture: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=face'
     },
     {
       position: 'Additional Member',
       name: 'Mrs. Elizabeth Coetzee',
       email: 'elizabeth.coetzee@brcsa.org',
       phone: '+27 53 890 1234',
-      branch: 'BRCSA De Aar'
+      branch: 'BRCSA De Aar',
+      picture: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face'
     }
   ],
   'nec-yca-ymwca': [
@@ -143,56 +152,64 @@ const groupLeaders = {
       name: 'Mr. David Mashaba',
       email: 'david.mashaba@brcsa.org',
       phone: '+27 11 123 4567',
-      branch: 'BRCSA Soweto Central'
+      branch: 'BRCSA Soweto Central',
+      picture: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'
     },
     {
       position: 'Deputy Chairperson',
       name: 'Ms. Grace Nkomo',
       email: 'grace.nkomo@brcsa.org',
       phone: '+27 15 234 5678',
-      branch: 'BRCSA Polokwane'
+      branch: 'BRCSA Polokwane',
+      picture: 'https://images.unsplash.com/photo-1494790108755-2616b612b510?w=150&h=150&fit=crop&crop=face'
     },
     {
       position: 'Secretary',
       name: 'Mr. Themba Ngwenya',
       email: 'themba.ngwenya@brcsa.org',
       phone: '+27 13 345 6789',
-      branch: 'BRCSA Nelspruit'
+      branch: 'BRCSA Nelspruit',
+      picture: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
     },
     {
       position: 'Deputy Secretary',
       name: 'Ms. Precious Mthombeni',
       email: 'precious.mthombeni@brcsa.org',
       phone: '+27 18 456 7890',
-      branch: 'BRCSA Mahikeng'
+      branch: 'BRCSA Mahikeng',
+      picture: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face'
     },
     {
       position: 'Treasurer',
       name: 'Mr. Sipho Radebe',
       email: 'sipho.radebe@brcsa.org',
       phone: '+27 11 567 8901',
-      branch: 'BRCSA Alexandra'
+      branch: 'BRCSA Alexandra',
+      picture: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face'
     },
     {
       position: 'Deputy Treasurer',
       name: 'Ms. Zanele Dube',
       email: 'zanele.dube@brcsa.org',
       phone: '+27 15 678 9012',
-      branch: 'BRCSA Tzaneen'
+      branch: 'BRCSA Tzaneen',
+      picture: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face'
     },
     {
       position: 'Additional Member',
       name: 'Mr. Lucky Mhlongo',
       email: 'lucky.mhlongo@brcsa.org',
       phone: '+27 13 789 0123',
-      branch: 'BRCSA Barberton'
+      branch: 'BRCSA Barberton',
+      picture: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=face'
     },
     {
       position: 'Additional Member',
       name: 'Ms. Portia Moloi',
       email: 'portia.moloi@brcsa.org',
       phone: '+27 18 890 1234',
-      branch: 'BRCSA Rustenburg'
+      branch: 'BRCSA Rustenburg',
+      picture: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face'
     }
   ]
 };
@@ -411,6 +428,7 @@ const GroupDetail = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead className="font-semibold text-black">Photo</TableHead>
                       <TableHead className="font-semibold text-black">Position</TableHead>
                       <TableHead className="font-semibold text-black">Name</TableHead>
                       <TableHead className="font-semibold text-black">Email</TableHead>
@@ -421,6 +439,14 @@ const GroupDetail = () => {
                   <TableBody>
                     {leaders.map((leader, index) => (
                       <TableRow key={index} className="hover:bg-gray-50">
+                        <TableCell>
+                          <Avatar className="h-12 w-12">
+                            <AvatarImage src={leader.picture} alt={leader.name} />
+                            <AvatarFallback className="bg-yellow-400 text-black font-semibold">
+                              {leader.name.split(' ').map(n => n[0]).join('')}
+                            </AvatarFallback>
+                          </Avatar>
+                        </TableCell>
                         <TableCell className="font-medium">
                           <Badge 
                             variant={leader.position === 'Chairperson' ? 'default' : 'secondary'}
