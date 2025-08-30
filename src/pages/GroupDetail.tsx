@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, MapPin, Clock, Users, ArrowLeft, Plus, Crown, User } from "lucide-react";
+import { Calendar, MapPin, Clock, Users, ArrowLeft, Plus, Crown, User, Mail } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { EmailCompose } from "@/components/ui/email-compose";
 
 // Mock data for group events with flyers
 const groupEvents = {
@@ -277,16 +278,36 @@ const GroupDetail = () => {
       </section>
 
       {/* Post Event Call-to-Action */}
-      <section className="py-8 bg-yellow-50 border-b border-yellow-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl font-bold text-black mb-2">Got an upcoming event?</h2>
-          <p className="text-gray-700 mb-4">Share it with the {group.name} community and let everyone know!</p>
-          <Link to={`/groups/${groupId}/post`}>
-            <Button className="bg-yellow-400 text-black hover:bg-yellow-500 font-semibold px-8 py-3">
-              <Plus className="h-5 w-5 mr-2" />
-              Post Your Event Now
-            </Button>
-          </Link>
+      <section className="py-8 bg-muted/30 border-b border-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            {/* Post Event Section */}
+            <div className="text-center lg:text-left">
+              <h2 className="text-2xl font-bold text-foreground mb-2">Got an upcoming event?</h2>
+              <p className="text-muted-foreground mb-4">Share it with the {group.name} community and let everyone know!</p>
+              <Link to={`/groups/${groupId}/post`}>
+                <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-8 py-3">
+                  <Plus className="h-5 w-5 mr-2" />
+                  Post Your Event Now
+                </Button>
+              </Link>
+            </div>
+
+            {/* Email Communication Section */}
+            <div className="text-center lg:text-left">
+              <h3 className="text-xl font-bold text-foreground mb-2">Send Direct Communications</h3>
+              <p className="text-muted-foreground mb-4">Send event invitations or letters directly to other BRCSA churches via email</p>
+              <EmailCompose 
+                groupName={group.name}
+                trigger={
+                  <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold px-8 py-3">
+                    <Mail className="h-5 w-5 mr-2" />
+                    Send Email to Churches
+                  </Button>
+                }
+              />
+            </div>
+          </div>
         </div>
       </section>
 
