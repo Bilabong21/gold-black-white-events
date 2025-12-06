@@ -77,7 +77,6 @@ const PostEvent = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Here you would typically send the form data and flyer to your backend
     console.log('Event posted:', { ...formData, groupId, flyer: selectedFlyer?.name });
     
     toast({
@@ -85,7 +84,6 @@ const PostEvent = () => {
       description: "Your event has been posted and will be visible to all group members.",
     });
     
-    // Navigate back to the group page
     navigate(`/groups/${groupId}`);
   };
 
@@ -107,36 +105,37 @@ const PostEvent = () => {
   const groupName = groupNames[groupId] || 'Unknown Group';
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <Header isAuthenticated={isAuthenticated} />
       
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-black via-gray-900 to-black text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Link to={`/groups/${groupId}`} className="inline-flex items-center text-yellow-400 hover:text-yellow-300 mb-4">
+      <section className="bg-secondary text-secondary-foreground py-16 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Link to={`/groups/${groupId}`} className="inline-flex items-center text-primary hover:text-primary/80 mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to {groupName}
           </Link>
           <h1 className="text-4xl font-bold mb-2">Post New Event</h1>
-          <p className="text-xl text-gray-300">
+          <p className="text-xl text-secondary-foreground/70">
             Share your event with the {groupName} community
           </p>
         </div>
       </section>
 
       {/* Post Event Form */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-muted/50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Card className="shadow-lg">
+          <Card className="shadow-xl border-t-4 border-t-primary bg-card">
             <CardHeader>
-              <CardTitle className="text-2xl font-bold text-black">Event Details</CardTitle>
+              <CardTitle className="text-2xl font-bold text-card-foreground">Event Details</CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Basic Event Info */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="title" className="text-black font-medium">Event Title *</Label>
+                    <Label htmlFor="title" className="text-foreground font-medium">Event Title *</Label>
                     <Input
                       id="title"
                       name="title"
@@ -144,12 +143,12 @@ const PostEvent = () => {
                       value={formData.title}
                       onChange={handleInputChange}
                       required
-                      className="mt-2 border-gray-300 focus:border-yellow-400 focus:ring-yellow-400"
+                      className="mt-2 border-border focus:border-primary focus:ring-primary"
                       placeholder="Enter event title"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="location" className="text-black font-medium">Location *</Label>
+                    <Label htmlFor="location" className="text-foreground font-medium">Location *</Label>
                     <Input
                       id="location"
                       name="location"
@@ -157,7 +156,7 @@ const PostEvent = () => {
                       value={formData.location}
                       onChange={handleInputChange}
                       required
-                      className="mt-2 border-gray-300 focus:border-yellow-400 focus:ring-yellow-400"
+                      className="mt-2 border-border focus:border-primary focus:ring-primary"
                       placeholder="Event location/venue"
                     />
                   </div>
@@ -165,7 +164,7 @@ const PostEvent = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="date" className="text-black font-medium">Event Date *</Label>
+                    <Label htmlFor="date" className="text-foreground font-medium">Event Date *</Label>
                     <Input
                       id="date"
                       name="date"
@@ -173,11 +172,11 @@ const PostEvent = () => {
                       value={formData.date}
                       onChange={handleInputChange}
                       required
-                      className="mt-2 border-gray-300 focus:border-yellow-400 focus:ring-yellow-400"
+                      className="mt-2 border-border focus:border-primary focus:ring-primary"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="time" className="text-black font-medium">Event Time *</Label>
+                    <Label htmlFor="time" className="text-foreground font-medium">Event Time *</Label>
                     <Input
                       id="time"
                       name="time"
@@ -185,13 +184,13 @@ const PostEvent = () => {
                       value={formData.time}
                       onChange={handleInputChange}
                       required
-                      className="mt-2 border-gray-300 focus:border-yellow-400 focus:ring-yellow-400"
+                      className="mt-2 border-border focus:border-primary focus:ring-primary"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor="description" className="text-black font-medium">Event Description *</Label>
+                  <Label htmlFor="description" className="text-foreground font-medium">Event Description *</Label>
                   <Textarea
                     id="description"
                     name="description"
@@ -199,25 +198,27 @@ const PostEvent = () => {
                     onChange={handleInputChange}
                     required
                     rows={5}
-                    className="mt-2 border-gray-300 focus:border-yellow-400 focus:ring-yellow-400"
+                    className="mt-2 border-border focus:border-primary focus:ring-primary"
                     placeholder="Provide detailed information about the event, its purpose, agenda, and any special requirements..."
                   />
                 </div>
 
                 {/* Event Flyer Upload */}
-                <div className="border-t pt-6">
-                  <h3 className="text-lg font-semibold text-black mb-4">Event Flyer (Optional)</h3>
+                <div className="border-t border-border pt-6">
+                  <h3 className="text-lg font-semibold text-foreground mb-4">Event Flyer (Optional)</h3>
                   
                   {!flyerPreview ? (
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
+                    <div className="border-2 border-dashed border-border rounded-lg p-6 bg-muted/30 hover:bg-muted/50 transition-colors">
                       <div className="text-center">
-                        <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <Upload className="h-8 w-8 text-primary" />
+                        </div>
                         <div className="mt-4">
                           <Label htmlFor="flyer" className="cursor-pointer">
-                            <span className="mt-2 block text-sm font-medium text-gray-900">
+                            <span className="mt-2 block text-sm font-medium text-foreground">
                               Upload event flyer
                             </span>
-                            <span className="mt-1 block text-sm text-gray-500">
+                            <span className="mt-1 block text-sm text-muted-foreground">
                               PNG, JPG, GIF up to 10MB
                             </span>
                           </Label>
@@ -233,7 +234,7 @@ const PostEvent = () => {
                         <Button
                           type="button"
                           variant="outline"
-                          className="mt-4"
+                          className="mt-4 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                           onClick={() => document.getElementById('flyer')?.click()}
                         >
                           Choose File
@@ -256,7 +257,7 @@ const PostEvent = () => {
                       >
                         <X className="h-4 w-4" />
                       </Button>
-                      <p className="text-sm text-gray-600 mt-2 text-center">
+                      <p className="text-sm text-muted-foreground mt-2 text-center">
                         {selectedFlyer?.name}
                       </p>
                     </div>
@@ -264,12 +265,12 @@ const PostEvent = () => {
                 </div>
 
                 {/* Contact Information */}
-                <div className="border-t pt-6">
-                  <h3 className="text-lg font-semibold text-black mb-4">Contact Information</h3>
+                <div className="border-t border-border pt-6">
+                  <h3 className="text-lg font-semibold text-foreground mb-4">Contact Information</h3>
                   
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
-                      <Label htmlFor="contactPerson" className="text-black font-medium">Contact Person *</Label>
+                      <Label htmlFor="contactPerson" className="text-foreground font-medium">Contact Person *</Label>
                       <Input
                         id="contactPerson"
                         name="contactPerson"
@@ -277,12 +278,12 @@ const PostEvent = () => {
                         value={formData.contactPerson}
                         onChange={handleInputChange}
                         required
-                        className="mt-2 border-gray-300 focus:border-yellow-400 focus:ring-yellow-400"
+                        className="mt-2 border-border focus:border-primary focus:ring-primary"
                         placeholder="Full name"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="contactEmail" className="text-black font-medium">Contact Email *</Label>
+                      <Label htmlFor="contactEmail" className="text-foreground font-medium">Contact Email *</Label>
                       <Input
                         id="contactEmail"
                         name="contactEmail"
@@ -290,19 +291,19 @@ const PostEvent = () => {
                         value={formData.contactEmail}
                         onChange={handleInputChange}
                         required
-                        className="mt-2 border-gray-300 focus:border-yellow-400 focus:ring-yellow-400"
+                        className="mt-2 border-border focus:border-primary focus:ring-primary"
                         placeholder="Email address"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="contactPhone" className="text-black font-medium">Contact Phone</Label>
+                      <Label htmlFor="contactPhone" className="text-foreground font-medium">Contact Phone</Label>
                       <Input
                         id="contactPhone"
                         name="contactPhone"
                         type="tel"
                         value={formData.contactPhone}
                         onChange={handleInputChange}
-                        className="mt-2 border-gray-300 focus:border-yellow-400 focus:ring-yellow-400"
+                        className="mt-2 border-border focus:border-primary focus:ring-primary"
                         placeholder="Phone number"
                       />
                     </div>
@@ -313,7 +314,7 @@ const PostEvent = () => {
                 <div className="flex flex-col sm:flex-row gap-4 pt-6">
                   <Button 
                     type="submit" 
-                    className="flex-1 bg-yellow-400 text-black hover:bg-yellow-500 font-semibold py-3"
+                    className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold py-3"
                   >
                     Post Event
                   </Button>
@@ -321,7 +322,7 @@ const PostEvent = () => {
                     <Button 
                       type="button" 
                       variant="outline" 
-                      className="w-full border-black text-black hover:bg-black hover:text-white py-3"
+                      className="w-full border-secondary-foreground text-foreground hover:bg-secondary hover:text-secondary-foreground py-3"
                     >
                       Cancel
                     </Button>
