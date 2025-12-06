@@ -35,14 +35,12 @@ const Contact = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically send the form data to your backend
     console.log('Form submitted:', formData);
     toast({
       title: "Message Sent!",
       description: "Thank you for contacting us. We'll get back to you soon.",
     });
     
-    // Reset form
     setFormData({
       name: '',
       email: '',
@@ -53,39 +51,43 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <Header isAuthenticated={isAuthenticated} />
       
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-black via-gray-900 to-black text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="bg-secondary text-secondary-foreground py-20 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/10 rounded-full blur-2xl"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-5xl font-bold mb-6">
-            Contact <span className="text-yellow-400">Us</span>
+            Contact <span className="text-primary">Us</span>
           </h1>
-          <p className="text-xl max-w-3xl mx-auto">
+          <p className="text-xl max-w-3xl mx-auto text-secondary-foreground/80">
             We'd love to hear from you. Reach out to us for prayer requests, questions, or to learn more about joining our community.
           </p>
         </div>
       </section>
 
       {/* Contact Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-muted/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             
             {/* Contact Information */}
             <div className="lg:col-span-1">
-              <h2 className="text-3xl font-bold text-black mb-6">Get In Touch</h2>
-              <div className="w-16 h-1 bg-yellow-400 mb-8"></div>
+              <h2 className="text-3xl font-bold text-foreground mb-6">Get In Touch</h2>
+              <div className="w-16 h-1 bg-primary mb-8"></div>
               
               <div className="space-y-6">
-                <Card className="border-l-4 border-l-yellow-400">
+                <Card className="border-l-4 border-l-primary bg-card hover:shadow-lg transition-shadow group">
                   <CardContent className="pt-6">
                     <div className="flex items-start space-x-3">
-                      <MapPin className="h-5 w-5 text-yellow-400 mt-1" />
+                      <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
+                        <MapPin className="h-5 w-5 text-primary" />
+                      </div>
                       <div>
-                        <h3 className="font-semibold text-black">Our Location</h3>
-                        <p className="text-gray-600">
+                        <h3 className="font-semibold text-card-foreground">Our Location</h3>
+                        <p className="text-muted-foreground">
                           123 Church Street<br />
                           Community City, CC 12345<br />
                           South Africa
@@ -95,13 +97,15 @@ const Contact = () => {
                   </CardContent>
                 </Card>
 
-                <Card className="border-l-4 border-l-yellow-400">
+                <Card className="border-l-4 border-l-primary bg-card hover:shadow-lg transition-shadow group">
                   <CardContent className="pt-6">
                     <div className="flex items-start space-x-3">
-                      <Phone className="h-5 w-5 text-yellow-400 mt-1" />
+                      <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
+                        <Phone className="h-5 w-5 text-primary" />
+                      </div>
                       <div>
-                        <h3 className="font-semibold text-black">Phone</h3>
-                        <p className="text-gray-600">
+                        <h3 className="font-semibold text-card-foreground">Phone</h3>
+                        <p className="text-muted-foreground">
                           Main Office: (555) 123-4567<br />
                           Pastor's Line: (555) 123-4568
                         </p>
@@ -110,13 +114,15 @@ const Contact = () => {
                   </CardContent>
                 </Card>
 
-                <Card className="border-l-4 border-l-yellow-400">
+                <Card className="border-l-4 border-l-primary bg-card hover:shadow-lg transition-shadow group">
                   <CardContent className="pt-6">
                     <div className="flex items-start space-x-3">
-                      <Mail className="h-5 w-5 text-yellow-400 mt-1" />
+                      <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
+                        <Mail className="h-5 w-5 text-primary" />
+                      </div>
                       <div>
-                        <h3 className="font-semibold text-black">Email</h3>
-                        <p className="text-gray-600">
+                        <h3 className="font-semibold text-card-foreground">Email</h3>
+                        <p className="text-muted-foreground">
                           General: info@brcsa.org<br />
                           Pastor: pastor@brcsa.org
                         </p>
@@ -125,13 +131,15 @@ const Contact = () => {
                   </CardContent>
                 </Card>
 
-                <Card className="border-l-4 border-l-yellow-400">
+                <Card className="border-l-4 border-l-primary bg-card hover:shadow-lg transition-shadow group">
                   <CardContent className="pt-6">
                     <div className="flex items-start space-x-3">
-                      <Clock className="h-5 w-5 text-yellow-400 mt-1" />
+                      <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
+                        <Clock className="h-5 w-5 text-primary" />
+                      </div>
                       <div>
-                        <h3 className="font-semibold text-black">Office Hours</h3>
-                        <p className="text-gray-600">
+                        <h3 className="font-semibold text-card-foreground">Office Hours</h3>
+                        <p className="text-muted-foreground">
                           Monday - Friday: 9:00 AM - 5:00 PM<br />
                           Saturday: 10:00 AM - 2:00 PM<br />
                           Sunday: After service
@@ -145,15 +153,15 @@ const Contact = () => {
 
             {/* Contact Form */}
             <div className="lg:col-span-2">
-              <Card className="shadow-lg">
+              <Card className="shadow-xl border-t-4 border-t-primary bg-card">
                 <CardHeader>
-                  <CardTitle className="text-2xl font-bold text-black">Send Us a Message</CardTitle>
+                  <CardTitle className="text-2xl font-bold text-card-foreground">Send Us a Message</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <Label htmlFor="name" className="text-black font-medium">Full Name *</Label>
+                        <Label htmlFor="name" className="text-foreground font-medium">Full Name *</Label>
                         <Input
                           id="name"
                           name="name"
@@ -161,12 +169,12 @@ const Contact = () => {
                           value={formData.name}
                           onChange={handleInputChange}
                           required
-                          className="mt-2 border-gray-300 focus:border-yellow-400 focus:ring-yellow-400"
+                          className="mt-2 border-border focus:border-primary focus:ring-primary"
                           placeholder="Enter your full name"
                         />
                       </div>
                       <div>
-                        <Label htmlFor="email" className="text-black font-medium">Email Address *</Label>
+                        <Label htmlFor="email" className="text-foreground font-medium">Email Address *</Label>
                         <Input
                           id="email"
                           name="email"
@@ -174,7 +182,7 @@ const Contact = () => {
                           value={formData.email}
                           onChange={handleInputChange}
                           required
-                          className="mt-2 border-gray-300 focus:border-yellow-400 focus:ring-yellow-400"
+                          className="mt-2 border-border focus:border-primary focus:ring-primary"
                           placeholder="Enter your email"
                         />
                       </div>
@@ -182,19 +190,19 @@ const Contact = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <Label htmlFor="phone" className="text-black font-medium">Phone Number</Label>
+                        <Label htmlFor="phone" className="text-foreground font-medium">Phone Number</Label>
                         <Input
                           id="phone"
                           name="phone"
                           type="tel"
                           value={formData.phone}
                           onChange={handleInputChange}
-                          className="mt-2 border-gray-300 focus:border-yellow-400 focus:ring-yellow-400"
+                          className="mt-2 border-border focus:border-primary focus:ring-primary"
                           placeholder="Enter your phone number"
                         />
                       </div>
                       <div>
-                        <Label htmlFor="subject" className="text-black font-medium">Subject *</Label>
+                        <Label htmlFor="subject" className="text-foreground font-medium">Subject *</Label>
                         <Input
                           id="subject"
                           name="subject"
@@ -202,14 +210,14 @@ const Contact = () => {
                           value={formData.subject}
                           onChange={handleInputChange}
                           required
-                          className="mt-2 border-gray-300 focus:border-yellow-400 focus:ring-yellow-400"
+                          className="mt-2 border-border focus:border-primary focus:ring-primary"
                           placeholder="What is this regarding?"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <Label htmlFor="message" className="text-black font-medium">Message *</Label>
+                      <Label htmlFor="message" className="text-foreground font-medium">Message *</Label>
                       <Textarea
                         id="message"
                         name="message"
@@ -217,14 +225,14 @@ const Contact = () => {
                         onChange={handleInputChange}
                         required
                         rows={6}
-                        className="mt-2 border-gray-300 focus:border-yellow-400 focus:ring-yellow-400"
+                        className="mt-2 border-border focus:border-primary focus:ring-primary"
                         placeholder="Please share your message, prayer request, or question..."
                       />
                     </div>
 
                     <Button 
                       type="submit" 
-                      className="w-full bg-yellow-400 text-black hover:bg-yellow-500 font-semibold py-3"
+                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-semibold py-3"
                     >
                       Send Message
                     </Button>
