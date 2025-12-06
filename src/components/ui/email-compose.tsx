@@ -20,49 +20,77 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-// Mock data for church email addresses
+// Church email addresses for NC, FS, NW, and GP provinces only
 const churchEmails = [
-  {
-    id: 'brcsa-cape-town',
-    name: 'BRCSA Cape Town Central',
-    email: 'capetown@brcsa.org',
-    region: 'Western Cape',
-    members: 120
-  },
-  {
-    id: 'brcsa-durban',
-    name: 'BRCSA Durban North',
-    email: 'durban@brcsa.org',
-    region: 'KwaZulu-Natal',
-    members: 95
-  },
   {
     id: 'brcsa-johannesburg',
     name: 'BRCSA Johannesburg Central',
     email: 'joburg@brcsa.org',
-    region: 'Gauteng',
+    region: 'Gauteng (GP)',
     members: 180
   },
   {
-    id: 'brcsa-port-elizabeth',
-    name: 'BRCSA Port Elizabeth',
-    email: 'pe@brcsa.org',
-    region: 'Eastern Cape',
+    id: 'brcsa-pretoria',
+    name: 'BRCSA Pretoria',
+    email: 'pretoria@brcsa.org',
+    region: 'Gauteng (GP)',
+    members: 145
+  },
+  {
+    id: 'brcsa-soweto',
+    name: 'BRCSA Soweto',
+    email: 'soweto@brcsa.org',
+    region: 'Gauteng (GP)',
+    members: 120
+  },
+  {
+    id: 'brcsa-bloemfontein',
+    name: 'BRCSA Bloemfontein Central',
+    email: 'bloemfontein@brcsa.org',
+    region: 'Free State (FS)',
+    members: 95
+  },
+  {
+    id: 'brcsa-welkom',
+    name: 'BRCSA Welkom',
+    email: 'welkom@brcsa.org',
+    region: 'Free State (FS)',
     members: 75
   },
   {
-    id: 'brcsa-pietermaritzburg',
-    name: 'BRCSA Pietermaritzburg',
-    email: 'pmb@brcsa.org',
-    region: 'KwaZulu-Natal',
-    members: 60
+    id: 'brcsa-kimberley',
+    name: 'BRCSA Kimberley',
+    email: 'kimberley@brcsa.org',
+    region: 'Northern Cape (NC)',
+    members: 65
   },
   {
-    id: 'brcsa-east-london',
-    name: 'BRCSA East London',
-    email: 'eastlondon@brcsa.org',
-    region: 'Eastern Cape',
+    id: 'brcsa-upington',
+    name: 'BRCSA Upington',
+    email: 'upington@brcsa.org',
+    region: 'Northern Cape (NC)',
+    members: 45
+  },
+  {
+    id: 'brcsa-mahikeng',
+    name: 'BRCSA Mahikeng',
+    email: 'mahikeng@brcsa.org',
+    region: 'North West (NW)',
     members: 85
+  },
+  {
+    id: 'brcsa-rustenburg',
+    name: 'BRCSA Rustenburg',
+    email: 'rustenburg@brcsa.org',
+    region: 'North West (NW)',
+    members: 90
+  },
+  {
+    id: 'brcsa-potchefstroom',
+    name: 'BRCSA Potchefstroom',
+    email: 'potchefstroom@brcsa.org',
+    region: 'North West (NW)',
+    members: 70
   }
 ];
 

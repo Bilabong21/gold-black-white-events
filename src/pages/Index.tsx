@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -51,65 +50,70 @@ const Index = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // Check if user is logged in (placeholder logic)
     const authStatus = localStorage.getItem('isAuthenticated');
     setIsAuthenticated(authStatus === 'true');
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <Header isAuthenticated={isAuthenticated} />
       
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-black via-gray-900 to-black text-white py-20">
-        <div className="absolute inset-0 bg-black/50"></div>
+      <section className="relative bg-secondary text-secondary-foreground py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-secondary via-secondary to-secondary/90"></div>
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-primary/5 rounded-full blur-2xl"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-5xl font-bold mb-6">
-            Welcome to <span className="text-yellow-400">BRCSA</span>
+            Welcome to <span className="text-primary">BRCSA</span>
           </h1>
-          <p className="text-xl mb-8 max-w-3xl mx-auto">
-            Building communities of faith, hope, and love. Join us in worship, fellowship, and service to our Lord and community.
+          <p className="text-xl mb-8 max-w-3xl mx-auto text-secondary-foreground/80">
+            Building communities of faith, hope, and love across NC, FS, NW, and GP provinces. Join us in worship, fellowship, and service to our Lord and community.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-yellow-400 text-black hover:bg-yellow-500 font-semibold">
-              Join Our Community
-            </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-black">
-              Learn More About Us
-            </Button>
+            <Link to="/register">
+              <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold shadow-lg shadow-primary/25">
+                Join Our Community
+              </Button>
+            </Link>
+            <Link to="/about">
+              <Button size="lg" variant="outline" className="border-secondary-foreground/30 text-secondary-foreground hover:bg-secondary-foreground hover:text-secondary">
+                Learn More About Us
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
 
       {/* Upcoming Events Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-black mb-4">Upcoming Events</h2>
-            <div className="w-24 h-1 bg-yellow-400 mx-auto mb-6"></div>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <h2 className="text-4xl font-bold text-foreground mb-4">Upcoming Events</h2>
+            <div className="w-24 h-1 bg-primary mx-auto mb-6 rounded-full"></div>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Stay connected with our community through worship services, fellowship meetings, and special events.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
             {upcomingEvents.map((event) => (
-              <Card key={event.id} className="hover:shadow-lg transition-shadow duration-300 border-l-4 border-l-yellow-400">
+              <Card key={event.id} className="hover:shadow-xl transition-all duration-300 border-l-4 border-l-primary bg-card">
                 <CardHeader>
                   <div className="flex justify-between items-start">
-                    <CardTitle className="text-xl font-semibold text-black">{event.title}</CardTitle>
-                    <span className="text-sm bg-yellow-400 text-black px-2 py-1 rounded-full font-medium">
+                    <CardTitle className="text-xl font-semibold text-card-foreground">{event.title}</CardTitle>
+                    <span className="text-sm bg-primary text-primary-foreground px-3 py-1 rounded-full font-medium">
                       {event.group}
                     </span>
                   </div>
-                  <CardDescription className="text-gray-600">
+                  <CardDescription className="text-muted-foreground">
                     {event.description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    <div className="flex items-center text-gray-700">
-                      <CalendarDays className="h-4 w-4 mr-2 text-yellow-400" />
+                    <div className="flex items-center text-card-foreground/80">
+                      <CalendarDays className="h-4 w-4 mr-2 text-primary" />
                       <span>{new Date(event.date).toLocaleDateString('en-US', { 
                         weekday: 'long', 
                         year: 'numeric', 
@@ -117,12 +121,12 @@ const Index = () => {
                         day: 'numeric' 
                       })}</span>
                     </div>
-                    <div className="flex items-center text-gray-700">
-                      <Clock className="h-4 w-4 mr-2 text-yellow-400" />
+                    <div className="flex items-center text-card-foreground/80">
+                      <Clock className="h-4 w-4 mr-2 text-primary" />
                       <span>{event.time}</span>
                     </div>
-                    <div className="flex items-center text-gray-700">
-                      <MapPin className="h-4 w-4 mr-2 text-yellow-400" />
+                    <div className="flex items-center text-card-foreground/80">
+                      <MapPin className="h-4 w-4 mr-2 text-primary" />
                       <span>{event.location}</span>
                     </div>
                   </div>
@@ -132,41 +136,43 @@ const Index = () => {
           </div>
 
           <div className="text-center mt-12">
-            <Button className="bg-black text-white hover:bg-gray-800">
-              View All Events
-            </Button>
+            <Link to="/groups">
+              <Button className="bg-secondary text-secondary-foreground hover:bg-secondary/90 shadow-lg">
+                View All Events
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
 
       {/* Quick Info Section */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="h-8 w-8 text-black" />
+            <div className="text-center group">
+              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-primary/25">
+                <Users className="h-8 w-8 text-primary-foreground" />
               </div>
-              <h3 className="text-xl font-semibold text-black mb-2">Join Our Fellowship</h3>
-              <p className="text-gray-600">
-                Connect with our diverse church groups and find your place in our community of faith.
+              <h3 className="text-xl font-semibold text-foreground mb-2">Join Our Fellowship</h3>
+              <p className="text-muted-foreground">
+                Connect with our diverse church groups across NC, FS, NW, and GP provinces.
               </p>
             </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Phone className="h-8 w-8 text-black" />
+            <div className="text-center group">
+              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-primary/25">
+                <Phone className="h-8 w-8 text-primary-foreground" />
               </div>
-              <h3 className="text-xl font-semibold text-black mb-2">Get In Touch</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-semibold text-foreground mb-2">Get In Touch</h3>
+              <p className="text-muted-foreground">
                 Have questions or need prayer? Our pastoral team is here to support and guide you.
               </p>
             </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Mail className="h-8 w-8 text-black" />
+            <div className="text-center group">
+              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-primary/25">
+                <Mail className="h-8 w-8 text-primary-foreground" />
               </div>
-              <h3 className="text-xl font-semibold text-black mb-2">Stay Connected</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-semibold text-foreground mb-2">Stay Connected</h3>
+              <p className="text-muted-foreground">
                 Subscribe to our newsletter for updates on events, sermons, and community news.
               </p>
             </div>
