@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,48 +11,24 @@ import Footer from "@/components/Footer";
 import { toast } from "@/hooks/use-toast";
 
 const Contact = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: ''
+    name: '', email: '', phone: '', subject: '', message: ''
   });
-
-  useEffect(() => {
-    const authStatus = localStorage.getItem('isAuthenticated');
-    setIsAuthenticated(authStatus === 'true');
-  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    toast({
-      title: "Message Sent!",
-      description: "Thank you for contacting us. We'll get back to you soon.",
-    });
-    
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      subject: '',
-      message: ''
-    });
+    toast({ title: "Message Sent!", description: "Thank you for contacting us. We'll get back to you soon." });
+    setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
   };
 
   return (
     <div className="min-h-screen bg-background">
-      <Header isAuthenticated={isAuthenticated} />
+      <Header />
       
       {/* Hero Section */}
       <section className="bg-secondary text-secondary-foreground py-20 relative overflow-hidden">
