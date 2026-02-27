@@ -14,16 +14,233 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      church_groups: {
+        Row: {
+          contact_email: string | null
+          created_at: string
+          description: string | null
+          established: string | null
+          full_name: string
+          id: string
+          name: string
+          provinces: string[] | null
+          slug: string
+        }
+        Insert: {
+          contact_email?: string | null
+          created_at?: string
+          description?: string | null
+          established?: string | null
+          full_name: string
+          id?: string
+          name: string
+          provinces?: string[] | null
+          slug: string
+        }
+        Update: {
+          contact_email?: string | null
+          created_at?: string
+          description?: string | null
+          established?: string | null
+          full_name?: string
+          id?: string
+          name?: string
+          provinces?: string[] | null
+          slug?: string
+        }
+        Relationships: []
+      }
+      committee_members: {
+        Row: {
+          branch: string | null
+          created_at: string
+          email: string | null
+          group_id: string | null
+          id: string
+          ministry_category:
+            | Database["public"]["Enums"]["committee_category"]
+            | null
+          name: string
+          phone: string | null
+          picture_url: string | null
+          position: string
+          province: string | null
+          updated_at: string
+        }
+        Insert: {
+          branch?: string | null
+          created_at?: string
+          email?: string | null
+          group_id?: string | null
+          id?: string
+          ministry_category?:
+            | Database["public"]["Enums"]["committee_category"]
+            | null
+          name: string
+          phone?: string | null
+          picture_url?: string | null
+          position: string
+          province?: string | null
+          updated_at?: string
+        }
+        Update: {
+          branch?: string | null
+          created_at?: string
+          email?: string | null
+          group_id?: string | null
+          id?: string
+          ministry_category?:
+            | Database["public"]["Enums"]["committee_category"]
+            | null
+          name?: string
+          phone?: string | null
+          picture_url?: string | null
+          position?: string
+          province?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "committee_members_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "church_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          contact_email: string | null
+          contact_person: string | null
+          contact_phone: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          event_date: string
+          event_time: string
+          flyer_url: string | null
+          group_id: string | null
+          id: string
+          location: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          contact_email?: string | null
+          contact_person?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          event_date: string
+          event_time: string
+          flyer_url?: string | null
+          group_id?: string | null
+          id?: string
+          location: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          contact_email?: string | null
+          contact_person?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          event_date?: string
+          event_time?: string
+          flyer_url?: string | null
+          group_id?: string | null
+          id?: string
+          location?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "church_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          first_name: string
+          id: string
+          last_name: string
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
+      committee_category:
+        | "Youth"
+        | "Women"
+        | "Men"
+        | "Choir"
+        | "Sunday School"
+        | "Ushers"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +367,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+      committee_category: [
+        "Youth",
+        "Women",
+        "Men",
+        "Choir",
+        "Sunday School",
+        "Ushers",
+      ],
+    },
   },
 } as const
