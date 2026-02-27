@@ -3,19 +3,11 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, Heart, BookOpen, HandHeart } from "lucide-react";
-import { useState, useEffect } from "react";
 
 const About = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    const authStatus = localStorage.getItem('isAuthenticated');
-    setIsAuthenticated(authStatus === 'true');
-  }, []);
-
   return (
     <div className="min-h-screen bg-background">
-      <Header isAuthenticated={isAuthenticated} />
+      <Header />
       
       {/* Hero Section */}
       <section className="bg-secondary text-secondary-foreground py-20 relative overflow-hidden">

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,221 +9,186 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { 
-  Shield, 
-  Users, 
-  Plus, 
-  Pencil, 
-  Trash2, 
-  Crown,
-  UserPlus,
-  Search,
-  Filter,
-  Home,
-  LogOut
-} from "lucide-react";
+import { Shield, Users, Pencil, Trash2, Crown, UserPlus, Search, Filter, Home, LogOut } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
-// Church group categories
-const churchCategories = [
-  { id: 'pec-fs-nc', name: 'PEC for FS/NC' },
-  { id: 'pec-gp-nw', name: 'PEC for GP/NW' },
-  { id: 'cec', name: 'CEC' },
-  { id: 'nec-synod', name: 'NEC SYNOD' },
-  { id: 'nec-mca', name: 'NEC MCA' },
-  { id: 'nec-cm', name: 'NEC CM' },
-  { id: 'nec-cca', name: 'NEC CCA' },
-  { id: 'nec-yca-ymwca', name: 'NEC YCA/YMWCA' }
-];
-
-const positions = [
-  'Chairperson',
-  'Deputy Chairperson',
-  'Secretary',
-  'Deputy Secretary',
-  'Treasurer',
-  'Deputy Treasurer',
-  'Additional Member'
-];
-
+const positions = ['Chairperson', 'Deputy Chairperson', 'Secretary', 'Deputy Secretary', 'Treasurer', 'Deputy Treasurer', 'Additional Member'];
 const provinces = ['NC', 'FS', 'NW', 'GP'];
-
-interface CommitteeMember {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  position: string;
-  category: string;
-  branch: string;
-  province: string;
-  picture: string;
-}
-
-// Initial mock data
-const initialMembers: CommitteeMember[] = [
-  {
-    id: '1',
-    name: 'Rev. Thabo Mthembu',
-    email: 'thabo.mthembu@brcsa.org',
-    phone: '+27 51 123 4567',
-    position: 'Chairperson',
-    category: 'pec-fs-nc',
-    branch: 'BRCSA Bloemfontein Central',
-    province: 'FS',
-    picture: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'
-  },
-  {
-    id: '2',
-    name: 'Mrs. Sarah Molefe',
-    email: 'sarah.molefe@brcsa.org',
-    phone: '+27 53 234 5678',
-    position: 'Deputy Chairperson',
-    category: 'pec-fs-nc',
-    branch: 'BRCSA Kimberley North',
-    province: 'NC',
-    picture: 'https://images.unsplash.com/photo-1494790108755-2616b612b510?w=150&h=150&fit=crop&crop=face'
-  },
-  {
-    id: '3',
-    name: 'Mr. David Mashaba',
-    email: 'david.mashaba@brcsa.org',
-    phone: '+27 11 123 4567',
-    position: 'Chairperson',
-    category: 'pec-gp-nw',
-    branch: 'BRCSA Johannesburg Central',
-    province: 'GP',
-    picture: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
-  },
-  {
-    id: '4',
-    name: 'Ms. Grace Nkomo',
-    email: 'grace.nkomo@brcsa.org',
-    phone: '+27 18 234 5678',
-    position: 'Secretary',
-    category: 'pec-gp-nw',
-    branch: 'BRCSA Mahikeng',
-    province: 'NW',
-    picture: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face'
-  }
-];
+const ministryCategories = ['Youth', 'Women', 'Men', 'Choir', 'Sunday School', 'Ushers'] as const;
 
 const Admin = () => {
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [members, setMembers] = useState<CommitteeMember[]>(initialMembers);
+  const { user, isAdmin, loading, signOut } = useAuth();
+  const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterCategory, setFilterCategory] = useState<string>('all');
+  const [filterGroup, setFilterGroup] = useState<string>('all');
   const [filterProvince, setFilterProvince] = useState<string>('all');
+  const [filterCategory, setFilterCategory] = useState<string>('all');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [editingMember, setEditingMember] = useState<CommitteeMember | null>(null);
-  const [newMember, setNewMember] = useState<Partial<CommitteeMember>>({
-    name: '',
-    email: '',
-    phone: '',
-    position: '',
-    category: '',
-    branch: '',
-    province: '',
-    picture: ''
-  });
+  const [editingMember, setEditingMember] = useState<any>(null);
+  const [newMember, setNewMember] = useState({ name: '', email: '', phone: '', position: '', group_id: '', ministry_category: '', branch: '', province: '', picture_url: '' });
 
   useEffect(() => {
-    const authStatus = localStorage.getItem('isAuthenticated');
-    const userEmail = localStorage.getItem('userEmail') || '';
-    
-    if (authStatus !== 'true') {
-      navigate('/login');
-      return;
-    }
-    
-    setIsAuthenticated(true);
-    
-    if (!userEmail.toLowerCase().includes('admin')) {
+    if (!loading && !user) navigate('/login');
+    if (!loading && user && !isAdmin) {
       toast.error('Access denied. Admin privileges required.');
       navigate('/groups');
-      return;
     }
-    
-    setIsAdmin(true);
-  }, [navigate]);
+  }, [user, loading, isAdmin, navigate]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('userEmail');
-    localStorage.removeItem('userName');
-    navigate('/login');
-  };
-
-  const filteredMembers = members.filter(member => {
-    const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         member.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         member.branch.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = filterCategory === 'all' || member.category === filterCategory;
-    const matchesProvince = filterProvince === 'all' || member.province === filterProvince;
-    return matchesSearch && matchesCategory && matchesProvince;
+  const { data: groups = [] } = useQuery({
+    queryKey: ['church-groups'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('church_groups').select('*').order('name');
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user && isAdmin,
   });
 
-  const handleAddMember = () => {
-    if (!newMember.name || !newMember.email || !newMember.position || !newMember.category) {
-      toast.error('Please fill in all required fields');
-      return;
-    }
+  const { data: members = [] } = useQuery({
+    queryKey: ['committee-members'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('committee_members').select('*, church_groups(name)').order('name');
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user && isAdmin,
+  });
 
-    const member: CommitteeMember = {
-      id: Date.now().toString(),
-      name: newMember.name || '',
-      email: newMember.email || '',
-      phone: newMember.phone || '',
-      position: newMember.position || '',
-      category: newMember.category || '',
-      branch: newMember.branch || '',
-      province: newMember.province || '',
-      picture: newMember.picture || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
-    };
+  const addMutation = useMutation({
+    mutationFn: async (member: typeof newMember) => {
+      const { error } = await supabase.from('committee_members').insert({
+        name: member.name,
+        email: member.email,
+        phone: member.phone,
+        position: member.position,
+        group_id: member.group_id || null,
+        ministry_category: (member.ministry_category as any) || null,
+        branch: member.branch,
+        province: member.province,
+        picture_url: member.picture_url,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['committee-members'] });
+      setIsAddDialogOpen(false);
+      setNewMember({ name: '', email: '', phone: '', position: '', group_id: '', ministry_category: '', branch: '', province: '', picture_url: '' });
+      toast.success('Member added successfully!');
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
 
-    setMembers(prev => [...prev, member]);
-    setNewMember({
-      name: '',
-      email: '',
-      phone: '',
-      position: '',
-      category: '',
-      branch: '',
-      province: '',
-      picture: ''
-    });
-    setIsAddDialogOpen(false);
-    toast.success('Committee member added successfully!');
-  };
+  const updateMutation = useMutation({
+    mutationFn: async (member: any) => {
+      const { error } = await supabase.from('committee_members').update({
+        name: member.name,
+        email: member.email,
+        phone: member.phone,
+        position: member.position,
+        group_id: member.group_id || null,
+        ministry_category: member.ministry_category || null,
+        branch: member.branch,
+        province: member.province,
+        picture_url: member.picture_url,
+      }).eq('id', member.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['committee-members'] });
+      setIsEditDialogOpen(false);
+      setEditingMember(null);
+      toast.success('Member updated!');
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
 
-  const handleEditMember = () => {
-    if (!editingMember) return;
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('committee_members').delete().eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['committee-members'] });
+      toast.success('Member removed!');
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
 
-    setMembers(prev => prev.map(m => m.id === editingMember.id ? editingMember : m));
-    setIsEditDialogOpen(false);
-    setEditingMember(null);
-    toast.success('Committee member updated successfully!');
-  };
+  const filteredMembers = members.filter((m: any) => {
+    const matchesSearch = m.name.toLowerCase().includes(searchTerm.toLowerCase()) || (m.email || '').toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesGroup = filterGroup === 'all' || m.group_id === filterGroup;
+    const matchesProvince = filterProvince === 'all' || m.province === filterProvince;
+    const matchesCategory = filterCategory === 'all' || m.ministry_category === filterCategory;
+    return matchesSearch && matchesGroup && matchesProvince && matchesCategory;
+  });
 
-  const handleDeleteMember = (id: string) => {
-    setMembers(prev => prev.filter(m => m.id !== id));
-    toast.success('Committee member removed successfully!');
-  };
+  const getGroupName = (groupId: string) => groups.find((g: any) => g.id === groupId)?.name || '—';
 
-  const getCategoryName = (categoryId: string) => {
-    return churchCategories.find(c => c.id === categoryId)?.name || categoryId;
-  };
+  if (loading || !user || !isAdmin) return null;
 
-  if (!isAuthenticated || !isAdmin) {
-    return null;
-  }
+  const MemberForm = ({ data, onChange, onSubmit, submitLabel }: any) => (
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <Label>Full Name *</Label>
+        <Input value={data.name} onChange={(e) => onChange({ ...data, name: e.target.value })} placeholder="e.g., Rev. John Doe" />
+      </div>
+      <div className="space-y-2">
+        <Label>Email</Label>
+        <Input type="email" value={data.email} onChange={(e) => onChange({ ...data, email: e.target.value })} placeholder="email@brcsa.org" />
+      </div>
+      <div className="space-y-2">
+        <Label>Phone</Label>
+        <Input value={data.phone} onChange={(e) => onChange({ ...data, phone: e.target.value })} placeholder="+27 xx xxx xxxx" />
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label>Church Group</Label>
+          <Select value={data.group_id} onValueChange={(v) => onChange({ ...data, group_id: v })}>
+            <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+            <SelectContent>{groups.map((g: any) => <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <Label>Position *</Label>
+          <Select value={data.position} onValueChange={(v) => onChange({ ...data, position: v })}>
+            <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+            <SelectContent>{positions.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label>Ministry Category</Label>
+          <Select value={data.ministry_category || ''} onValueChange={(v) => onChange({ ...data, ministry_category: v })}>
+            <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+            <SelectContent>{ministryCategories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <Label>Province</Label>
+          <Select value={data.province} onValueChange={(v) => onChange({ ...data, province: v })}>
+            <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+            <SelectContent>{provinces.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
+      </div>
+      <div className="space-y-2">
+        <Label>Branch</Label>
+        <Input value={data.branch} onChange={(e) => onChange({ ...data, branch: e.target.value })} placeholder="BRCSA ..." />
+      </div>
+      <Button onClick={onSubmit} className="w-full bg-primary text-primary-foreground hover:bg-primary/90">{submitLabel}</Button>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-secondary">
-      {/* Admin Header - Separate from church app */}
+      {/* Header */}
       <header className="bg-secondary border-b-4 border-primary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -238,443 +202,157 @@ const Admin = () => {
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <Link to="/">
-                <Button variant="ghost" size="sm" className="text-secondary-foreground hover:bg-primary/10">
-                  <Home className="h-4 w-4 mr-2" />
-                  Main Site
-                </Button>
-              </Link>
-              <Button variant="ghost" size="sm" onClick={handleLogout} className="text-secondary-foreground hover:bg-primary/10">
-                <LogOut className="h-4 w-4 mr-2" />
-                Logout
-              </Button>
+              <Link to="/"><Button variant="ghost" size="sm" className="text-secondary-foreground hover:bg-primary/10"><Home className="h-4 w-4 mr-2" />Main Site</Button></Link>
+              <Button variant="ghost" size="sm" onClick={() => { signOut(); navigate('/login'); }} className="text-secondary-foreground hover:bg-primary/10"><LogOut className="h-4 w-4 mr-2" />Logout</Button>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Hero Section */}
+      {/* Hero */}
       <section className="bg-gradient-to-br from-secondary via-secondary to-background py-12 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/10 rounded-full blur-2xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl"></div>
-        
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4">
-            <div className="p-4 bg-primary/10 rounded-2xl border border-primary/20">
-              <Crown className="h-12 w-12 text-primary" />
-            </div>
+            <div className="p-4 bg-primary/10 rounded-2xl border border-primary/20"><Crown className="h-12 w-12 text-primary" /></div>
             <div>
-              <h1 className="text-4xl font-bold text-secondary-foreground">
-                Admin <span className="text-primary">Dashboard</span>
-              </h1>
-              <p className="text-secondary-foreground/70 text-lg">
-                Manage committee members across all church categories
-              </p>
+              <h1 className="text-4xl font-bold text-secondary-foreground">Admin <span className="text-primary">Dashboard</span></h1>
+              <p className="text-secondary-foreground/70 text-lg">Manage committee members across all church categories</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Main Content */}
-      <section className="py-8">
+      {/* Stats */}
+      <section className="py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          {/* Controls Bar */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Card className="bg-card border-primary/20"><CardContent className="p-4 text-center"><div className="text-2xl font-bold text-primary">{members.length}</div><div className="text-sm text-muted-foreground">Total Members</div></CardContent></Card>
+            <Card className="bg-card border-primary/20"><CardContent className="p-4 text-center"><div className="text-2xl font-bold text-primary">{groups.length}</div><div className="text-sm text-muted-foreground">Groups</div></CardContent></Card>
+            <Card className="bg-card border-primary/20"><CardContent className="p-4 text-center"><div className="text-2xl font-bold text-primary">{provinces.length}</div><div className="text-sm text-muted-foreground">Provinces</div></CardContent></Card>
+            <Card className="bg-card border-primary/20"><CardContent className="p-4 text-center"><div className="text-2xl font-bold text-primary">{ministryCategories.length}</div><div className="text-sm text-muted-foreground">Categories</div></CardContent></Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Controls & Table */}
+      <section className="py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Card className="mb-6 bg-card border-primary/20 shadow-lg">
             <CardContent className="pt-6">
               <div className="flex flex-col lg:flex-row gap-4 justify-between items-start lg:items-center">
                 <div className="flex flex-col sm:flex-row gap-4 flex-1">
                   <div className="relative flex-1 max-w-md">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Search members..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10 border-border focus:border-primary"
-                    />
+                    <Input placeholder="Search members..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10" />
                   </div>
-                  
-                  <Select value={filterCategory} onValueChange={setFilterCategory}>
-                    <SelectTrigger className="w-48 border-border">
-                      <Filter className="h-4 w-4 mr-2" />
-                      <SelectValue placeholder="Filter by category" />
-                    </SelectTrigger>
+                  <Select value={filterGroup} onValueChange={setFilterGroup}>
+                    <SelectTrigger className="w-48"><Filter className="h-4 w-4 mr-2" /><SelectValue placeholder="Group" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Categories</SelectItem>
-                      {churchCategories.map((cat) => (
-                        <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
-                      ))}
+                      <SelectItem value="all">All Groups</SelectItem>
+                      {groups.map((g: any) => <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>)}
                     </SelectContent>
                   </Select>
-
-                  <Select value={filterProvince} onValueChange={setFilterProvince}>
-                    <SelectTrigger className="w-40 border-border">
-                      <SelectValue placeholder="Province" />
-                    </SelectTrigger>
+                  <Select value={filterCategory} onValueChange={setFilterCategory}>
+                    <SelectTrigger className="w-44"><SelectValue placeholder="Category" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Provinces</SelectItem>
-                      {provinces.map((prov) => (
-                        <SelectItem key={prov} value={prov}>{prov}</SelectItem>
-                      ))}
+                      <SelectItem value="all">All Categories</SelectItem>
+                      {ministryCategories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <Select value={filterProvince} onValueChange={setFilterProvince}>
+                    <SelectTrigger className="w-36"><SelectValue placeholder="Province" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All</SelectItem>
+                      {provinces.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
-
                 <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
-                      <UserPlus className="h-4 w-4 mr-2" />
-                      Add Member
-                    </Button>
+                    <Button className="bg-primary text-primary-foreground hover:bg-primary/90"><UserPlus className="h-4 w-4 mr-2" />Add Member</Button>
                   </DialogTrigger>
                   <DialogContent className="max-w-md bg-card">
                     <DialogHeader>
-                      <DialogTitle className="flex items-center gap-2 text-card-foreground">
-                        <UserPlus className="h-5 w-5 text-primary" />
-                        Add Committee Member
-                      </DialogTitle>
-                      <DialogDescription className="text-muted-foreground">
-                        Add a new member to a church committee
-                      </DialogDescription>
+                      <DialogTitle className="flex items-center gap-2"><UserPlus className="h-5 w-5 text-primary" />Add Committee Member</DialogTitle>
+                      <DialogDescription>Add a new member to a church committee</DialogDescription>
                     </DialogHeader>
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label className="text-foreground">Full Name *</Label>
-                        <Input
-                          value={newMember.name}
-                          onChange={(e) => setNewMember(prev => ({ ...prev, name: e.target.value }))}
-                          placeholder="e.g., Rev. John Doe"
-                          className="border-border focus:border-primary"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-foreground">Email *</Label>
-                        <Input
-                          type="email"
-                          value={newMember.email}
-                          onChange={(e) => setNewMember(prev => ({ ...prev, email: e.target.value }))}
-                          placeholder="email@brcsa.org"
-                          className="border-border focus:border-primary"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-foreground">Phone</Label>
-                        <Input
-                          value={newMember.phone}
-                          onChange={(e) => setNewMember(prev => ({ ...prev, phone: e.target.value }))}
-                          placeholder="+27 xx xxx xxxx"
-                          className="border-border focus:border-primary"
-                        />
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label className="text-foreground">Category *</Label>
-                          <Select 
-                            value={newMember.category} 
-                            onValueChange={(value) => setNewMember(prev => ({ ...prev, category: value }))}
-                          >
-                            <SelectTrigger className="border-border">
-                              <SelectValue placeholder="Select" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {churchCategories.map((cat) => (
-                                <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="text-foreground">Position *</Label>
-                          <Select 
-                            value={newMember.position} 
-                            onValueChange={(value) => setNewMember(prev => ({ ...prev, position: value }))}
-                          >
-                            <SelectTrigger className="border-border">
-                              <SelectValue placeholder="Select" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {positions.map((pos) => (
-                                <SelectItem key={pos} value={pos}>{pos}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label className="text-foreground">Province</Label>
-                          <Select 
-                            value={newMember.province} 
-                            onValueChange={(value) => setNewMember(prev => ({ ...prev, province: value }))}
-                          >
-                            <SelectTrigger className="border-border">
-                              <SelectValue placeholder="Select" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {provinces.map((prov) => (
-                                <SelectItem key={prov} value={prov}>{prov}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="text-foreground">Branch</Label>
-                          <Input
-                            value={newMember.branch}
-                            onChange={(e) => setNewMember(prev => ({ ...prev, branch: e.target.value }))}
-                            placeholder="BRCSA ..."
-                            className="border-border focus:border-primary"
-                          />
-                        </div>
-                      </div>
-                      <Button onClick={handleAddMember} className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Member
-                      </Button>
-                    </div>
+                    <MemberForm data={newMember} onChange={setNewMember} onSubmit={() => addMutation.mutate(newMember)} submitLabel="Add Member" />
                   </DialogContent>
                 </Dialog>
               </div>
             </CardContent>
           </Card>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <Card className="bg-card border-2 border-primary/30 shadow-lg hover:shadow-xl transition-shadow">
-              <CardContent className="pt-6 text-center">
-                <div className="text-4xl font-bold text-primary">{members.length}</div>
-                <div className="text-muted-foreground text-sm mt-1">Total Members</div>
-              </CardContent>
-            </Card>
-            <Card className="bg-card border border-border shadow-lg hover:shadow-xl transition-shadow">
-              <CardContent className="pt-6 text-center">
-                <div className="text-4xl font-bold text-card-foreground">{churchCategories.length}</div>
-                <div className="text-muted-foreground text-sm mt-1">Categories</div>
-              </CardContent>
-            </Card>
-            <Card className="bg-card border border-border shadow-lg hover:shadow-xl transition-shadow">
-              <CardContent className="pt-6 text-center">
-                <div className="text-4xl font-bold text-card-foreground">{provinces.length}</div>
-                <div className="text-muted-foreground text-sm mt-1">Provinces</div>
-              </CardContent>
-            </Card>
-            <Card className="bg-card border border-border shadow-lg hover:shadow-xl transition-shadow">
-              <CardContent className="pt-6 text-center">
-                <div className="text-4xl font-bold text-card-foreground">{filteredMembers.length}</div>
-                <div className="text-muted-foreground text-sm mt-1">Filtered Results</div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Members Table */}
-          <Card className="bg-card border-primary/20 shadow-xl">
-            <CardHeader className="border-b border-border">
-              <CardTitle className="flex items-center gap-2 text-card-foreground">
-                <Crown className="h-5 w-5 text-primary" />
-                Committee Members
-              </CardTitle>
-              <CardDescription className="text-muted-foreground">
-                Manage all committee members across church categories
-              </CardDescription>
-            </CardHeader>
+          <Card className="bg-card border-primary/20 shadow-lg">
             <CardContent className="p-0">
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="border-border hover:bg-muted/50">
-                      <TableHead className="text-muted-foreground">Member</TableHead>
-                      <TableHead className="text-muted-foreground">Position</TableHead>
-                      <TableHead className="text-muted-foreground">Category</TableHead>
-                      <TableHead className="text-muted-foreground">Province</TableHead>
-                      <TableHead className="text-muted-foreground">Branch</TableHead>
-                      <TableHead className="text-right text-muted-foreground">Actions</TableHead>
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-secondary hover:bg-secondary">
+                    <TableHead className="text-secondary-foreground">Member</TableHead>
+                    <TableHead className="text-secondary-foreground">Position</TableHead>
+                    <TableHead className="text-secondary-foreground">Group</TableHead>
+                    <TableHead className="text-secondary-foreground">Category</TableHead>
+                    <TableHead className="text-secondary-foreground">Province</TableHead>
+                    <TableHead className="text-secondary-foreground text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredMembers.map((member: any) => (
+                    <TableRow key={member.id} className="hover:bg-muted/50">
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-10 w-10 border-2 border-primary">
+                            <AvatarImage src={member.picture_url || ''} />
+                            <AvatarFallback className="bg-primary/10 text-primary">{member.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium text-foreground">{member.name}</p>
+                            <p className="text-xs text-muted-foreground">{member.email}</p>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell><Badge variant="outline" className="border-primary text-primary">{member.position}</Badge></TableCell>
+                      <TableCell className="text-muted-foreground">{member.church_groups?.name || '—'}</TableCell>
+                      <TableCell>{member.ministry_category && <Badge className="bg-accent text-accent-foreground">{member.ministry_category}</Badge>}</TableCell>
+                      <TableCell><Badge variant="secondary">{member.province || '—'}</Badge></TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button size="sm" variant="ghost" className="text-primary hover:bg-primary/10" onClick={() => { setEditingMember({ ...member }); setIsEditDialogOpen(true); }}>
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button size="sm" variant="ghost" className="text-destructive hover:bg-destructive/10" onClick={() => deleteMutation.mutate(member.id)}>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredMembers.map((member) => (
-                      <TableRow key={member.id} className="border-border hover:bg-muted/30">
-                        <TableCell>
-                          <div className="flex items-center gap-3">
-                            <Avatar className="border-2 border-primary/30">
-                              <AvatarImage src={member.picture} />
-                              <AvatarFallback className="bg-primary/10 text-primary">
-                                {member.name.split(' ').map(n => n[0]).join('')}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <div className="font-medium text-card-foreground">{member.name}</div>
-                              <div className="text-sm text-muted-foreground">{member.email}</div>
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="border-primary/50 text-primary bg-primary/5">
-                            {member.position}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <span className="text-card-foreground">{getCategoryName(member.category)}</span>
-                        </TableCell>
-                        <TableCell>
-                          <Badge className="bg-secondary text-secondary-foreground border border-border">
-                            {member.province}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <span className="text-muted-foreground text-sm">{member.branch}</span>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Dialog open={isEditDialogOpen && editingMember?.id === member.id} onOpenChange={(open) => {
-                              setIsEditDialogOpen(open);
-                              if (!open) setEditingMember(null);
-                            }}>
-                              <DialogTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => setEditingMember(member)}
-                                  className="text-primary hover:bg-primary/10"
-                                >
-                                  <Pencil className="h-4 w-4" />
-                                </Button>
-                              </DialogTrigger>
-                              <DialogContent className="max-w-md bg-card">
-                                <DialogHeader>
-                                  <DialogTitle className="flex items-center gap-2 text-card-foreground">
-                                    <Pencil className="h-5 w-5 text-primary" />
-                                    Edit Committee Member
-                                  </DialogTitle>
-                                </DialogHeader>
-                                {editingMember && (
-                                  <div className="space-y-4">
-                                    <div className="space-y-2">
-                                      <Label className="text-foreground">Full Name *</Label>
-                                      <Input
-                                        value={editingMember.name}
-                                        onChange={(e) => setEditingMember(prev => prev ? { ...prev, name: e.target.value } : null)}
-                                        className="border-border focus:border-primary"
-                                      />
-                                    </div>
-                                    <div className="space-y-2">
-                                      <Label className="text-foreground">Email *</Label>
-                                      <Input
-                                        type="email"
-                                        value={editingMember.email}
-                                        onChange={(e) => setEditingMember(prev => prev ? { ...prev, email: e.target.value } : null)}
-                                        className="border-border focus:border-primary"
-                                      />
-                                    </div>
-                                    <div className="space-y-2">
-                                      <Label className="text-foreground">Phone</Label>
-                                      <Input
-                                        value={editingMember.phone}
-                                        onChange={(e) => setEditingMember(prev => prev ? { ...prev, phone: e.target.value } : null)}
-                                        className="border-border focus:border-primary"
-                                      />
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                      <div className="space-y-2">
-                                        <Label className="text-foreground">Category</Label>
-                                        <Select 
-                                          value={editingMember.category} 
-                                          onValueChange={(value) => setEditingMember(prev => prev ? { ...prev, category: value } : null)}
-                                        >
-                                          <SelectTrigger className="border-border">
-                                            <SelectValue />
-                                          </SelectTrigger>
-                                          <SelectContent>
-                                            {churchCategories.map((cat) => (
-                                              <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
-                                            ))}
-                                          </SelectContent>
-                                        </Select>
-                                      </div>
-                                      <div className="space-y-2">
-                                        <Label className="text-foreground">Position</Label>
-                                        <Select 
-                                          value={editingMember.position} 
-                                          onValueChange={(value) => setEditingMember(prev => prev ? { ...prev, position: value } : null)}
-                                        >
-                                          <SelectTrigger className="border-border">
-                                            <SelectValue />
-                                          </SelectTrigger>
-                                          <SelectContent>
-                                            {positions.map((pos) => (
-                                              <SelectItem key={pos} value={pos}>{pos}</SelectItem>
-                                            ))}
-                                          </SelectContent>
-                                        </Select>
-                                      </div>
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                      <div className="space-y-2">
-                                        <Label className="text-foreground">Province</Label>
-                                        <Select 
-                                          value={editingMember.province} 
-                                          onValueChange={(value) => setEditingMember(prev => prev ? { ...prev, province: value } : null)}
-                                        >
-                                          <SelectTrigger className="border-border">
-                                            <SelectValue />
-                                          </SelectTrigger>
-                                          <SelectContent>
-                                            {provinces.map((prov) => (
-                                              <SelectItem key={prov} value={prov}>{prov}</SelectItem>
-                                            ))}
-                                          </SelectContent>
-                                        </Select>
-                                      </div>
-                                      <div className="space-y-2">
-                                        <Label className="text-foreground">Branch</Label>
-                                        <Input
-                                          value={editingMember.branch}
-                                          onChange={(e) => setEditingMember(prev => prev ? { ...prev, branch: e.target.value } : null)}
-                                          className="border-border focus:border-primary"
-                                        />
-                                      </div>
-                                    </div>
-                                    <Button onClick={handleEditMember} className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
-                                      Save Changes
-                                    </Button>
-                                  </div>
-                                )}
-                              </DialogContent>
-                            </Dialog>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleDeleteMember(member.id)}
-                              className="text-destructive hover:bg-destructive/10"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-              
-              {filteredMembers.length === 0 && (
-                <div className="text-center py-12">
-                  <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-card-foreground mb-2">No Members Found</h3>
-                  <p className="text-muted-foreground">Try adjusting your search or filters</p>
-                </div>
-              )}
+                  ))}
+                  {filteredMembers.length === 0 && (
+                    <TableRow><TableCell colSpan={6} className="text-center py-12 text-muted-foreground">No members found</TableCell></TableRow>
+                  )}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         </div>
       </section>
 
-      {/* Admin Footer */}
-      <footer className="bg-secondary border-t border-primary/20 py-6 mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-secondary-foreground/60 text-sm">
-            BRCSA Admin Panel &copy; {new Date().getFullYear()} - Committee Management System
-          </p>
+      {/* Edit Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-md bg-card">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2"><Pencil className="h-5 w-5 text-primary" />Edit Member</DialogTitle>
+            <DialogDescription>Update committee member details</DialogDescription>
+          </DialogHeader>
+          {editingMember && <MemberForm data={editingMember} onChange={setEditingMember} onSubmit={() => updateMutation.mutate(editingMember)} submitLabel="Save Changes" />}
+        </DialogContent>
+      </Dialog>
+
+      {/* Footer */}
+      <footer className="bg-secondary border-t-4 border-primary py-6 mt-8">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <p className="text-secondary-foreground/60 text-sm">© {new Date().getFullYear()} BRCSA Admin Panel. All rights reserved.</p>
         </div>
       </footer>
     </div>
