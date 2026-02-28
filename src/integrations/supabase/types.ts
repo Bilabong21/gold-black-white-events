@@ -178,6 +178,7 @@ export type Database = {
           id: string
           last_name: string
           phone: string | null
+          status: string
           updated_at: string
           user_id: string
         }
@@ -187,6 +188,7 @@ export type Database = {
           id?: string
           last_name?: string
           phone?: string | null
+          status?: string
           updated_at?: string
           user_id: string
         }
@@ -196,6 +198,7 @@ export type Database = {
           id?: string
           last_name?: string
           phone?: string | null
+          status?: string
           updated_at?: string
           user_id?: string
         }

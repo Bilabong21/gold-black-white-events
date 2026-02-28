@@ -8,7 +8,8 @@ interface AuthContextType {
   loading: boolean;
   isAdmin: boolean;
   isSecretary: boolean;
-  profile: { first_name: string; last_name: string; phone: string } | null;
+  isApproved: boolean;
+  profile: { first_name: string; last_name: string; phone: string; status?: string } | null;
   signOut: () => Promise<void>;
 }
 
@@ -18,6 +19,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   isAdmin: false,
   isSecretary: false,
+  isApproved: false,
   profile: null,
   signOut: async () => {},
 });
@@ -30,7 +32,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isSecretary, setIsSecretary] = useState(false);
-  const [profile, setProfile] = useState<{ first_name: string; last_name: string; phone: string } | null>(null);
+  const [profile, setProfile] = useState<{ first_name: string; last_name: string; phone: string; status?: string } | null>(null);
 
   const checkRoles = async (userId: string, email: string) => {
     // Check admin role from user_roles table
@@ -43,7 +45,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const fetchProfile = async (userId: string) => {
     const { data } = await supabase
       .from('profiles')
-      .select('first_name, last_name, phone')
+      .select('first_name, last_name, phone, status')
       .eq('user_id', userId)
       .maybeSingle();
     setProfile(data);
@@ -86,8 +88,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await supabase.auth.signOut();
   };
 
+  const isApproved = profile?.status === 'approved' || isAdmin;
+
   return (
-    <AuthContext.Provider value={{ user, session, loading, isAdmin, isSecretary, profile, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, isAdmin, isSecretary, isApproved, profile, signOut }}>
       {children}
     </AuthContext.Provider>
   );
