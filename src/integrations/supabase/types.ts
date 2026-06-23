@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      branches: {
+        Row: {
+          city: string | null
+          created_at: string
+          id: string
+          name: string
+          province: string
+          updated_at: string
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          province: string
+          updated_at?: string
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          province?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       church_groups: {
         Row: {
           contact_email: string | null
