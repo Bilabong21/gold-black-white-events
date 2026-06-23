@@ -28,6 +28,7 @@ const Header = () => {
           <nav className="hidden md:flex space-x-8">
             <Link to="/" className="text-secondary-foreground/70 hover:text-primary font-medium transition-colors">Home</Link>
             <Link to="/about" className="text-secondary-foreground/70 hover:text-primary font-medium transition-colors">About Us</Link>
+            <Link to="/branches" className="text-secondary-foreground/70 hover:text-primary font-medium transition-colors">Branches</Link>
             <Link to="/contact" className="text-secondary-foreground/70 hover:text-primary font-medium transition-colors">Contact</Link>
             {user && (
               <Link to="/groups" className="text-secondary-foreground/70 hover:text-primary font-medium transition-colors">Church Groups</Link>
@@ -67,6 +68,7 @@ const Header = () => {
             <nav className="flex flex-col space-y-4">
               <Link to="/" className="text-secondary-foreground/70 hover:text-primary font-medium">Home</Link>
               <Link to="/about" className="text-secondary-foreground/70 hover:text-primary font-medium">About Us</Link>
+              <Link to="/branches" className="text-secondary-foreground/70 hover:text-primary font-medium">Branches</Link>
               <Link to="/contact" className="text-secondary-foreground/70 hover:text-primary font-medium">Contact</Link>
               {user && <Link to="/groups" className="text-secondary-foreground/70 hover:text-primary font-medium">Church Groups</Link>}
               {user && isAdmin && (

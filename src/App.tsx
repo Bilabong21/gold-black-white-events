@@ -13,6 +13,7 @@ import Groups from "./pages/Groups";
 import GroupDetail from "./pages/GroupDetail";
 import PostEvent from "./pages/PostEvent";
 import Admin from "./pages/Admin";
+import Branches from "./pages/Branches";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/groups/:groupId" element={<GroupDetail />} />
             <Route path="/groups/:groupId/post" element={<PostEvent />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/branches" element={<Branches />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

@@ -19,11 +19,10 @@ const Index = () => {
         .select('*, church_groups(name)')
         .gte('event_date', new Date().toISOString().split('T')[0])
         .order('event_date', { ascending: true })
-        .limit(4);
+        .limit(6);
       if (error) throw error;
       return data;
     },
-    enabled: !!user,
   });
 
   return (
