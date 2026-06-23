@@ -13,6 +13,7 @@ import Groups from "./pages/Groups";
 import GroupDetail from "./pages/GroupDetail";
 import PostEvent from "./pages/PostEvent";
 import Admin from "./pages/Admin";
+import Branches from "./pages/Branches";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
