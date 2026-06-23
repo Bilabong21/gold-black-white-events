@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, Users, Pencil, Trash2, Crown, UserPlus, Search, Filter, Home, LogOut, BarChart3, CalendarDays, UserCheck } from "lucide-react";
+import { Shield, Users, Pencil, Trash2, Crown, UserPlus, Search, Filter, Home, LogOut, BarChart3, CalendarDays, UserCheck, Building2, FolderKanban } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -18,6 +18,8 @@ import AdminMemberForm, { positions, provinces, ministryCategories } from "@/com
 import AdminUserManagement from "@/components/admin/AdminUserManagement";
 import AdminEventModeration from "@/components/admin/AdminEventModeration";
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
+import AdminBranchManagement from "@/components/admin/AdminBranchManagement";
+import AdminGroupManagement from "@/components/admin/AdminGroupManagement";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -176,8 +178,14 @@ const Admin = () => {
               <TabsTrigger value="users" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2">
                 <UserCheck className="h-4 w-4" />Users
               </TabsTrigger>
+              <TabsTrigger value="branches" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2">
+                <Building2 className="h-4 w-4" />Branches
+              </TabsTrigger>
+              <TabsTrigger value="groups" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2">
+                <FolderKanban className="h-4 w-4" />Groups
+              </TabsTrigger>
               <TabsTrigger value="members" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2">
-                <Users className="h-4 w-4" />Members
+                <Users className="h-4 w-4" />Committees
               </TabsTrigger>
               <TabsTrigger value="events" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2">
                 <CalendarDays className="h-4 w-4" />Events
@@ -186,6 +194,9 @@ const Admin = () => {
                 <BarChart3 className="h-4 w-4" />Analytics
               </TabsTrigger>
             </TabsList>
+
+            <TabsContent value="branches"><AdminBranchManagement /></TabsContent>
+            <TabsContent value="groups"><AdminGroupManagement /></TabsContent>
 
             {/* Users Tab */}
             <TabsContent value="users">
