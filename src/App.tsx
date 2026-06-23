@@ -35,6 +35,7 @@ const App = () => (
             <Route path="/groups/:groupId" element={<GroupDetail />} />
             <Route path="/groups/:groupId/post" element={<PostEvent />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/branches" element={<Branches />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
