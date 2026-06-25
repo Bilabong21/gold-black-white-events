@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, Users, Pencil, Trash2, Crown, UserPlus, Search, Filter, Home, LogOut, BarChart3, CalendarDays, UserCheck, Building2, FolderKanban } from "lucide-react";
+import { Shield, Users, Pencil, Trash2, Crown, UserPlus, Search, Filter, Home, LogOut, BarChart3, CalendarDays, UserCheck, Building2, FolderKanban, MessageSquareWarning } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -20,6 +20,7 @@ import AdminEventModeration from "@/components/admin/AdminEventModeration";
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
 import AdminBranchManagement from "@/components/admin/AdminBranchManagement";
 import AdminGroupManagement from "@/components/admin/AdminGroupManagement";
+import AdminComplaints from "@/components/admin/AdminComplaints";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -190,10 +191,15 @@ const Admin = () => {
               <TabsTrigger value="events" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2">
                 <CalendarDays className="h-4 w-4" />Events
               </TabsTrigger>
+              <TabsTrigger value="complaints" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2">
+                <MessageSquareWarning className="h-4 w-4" />Complaints
+              </TabsTrigger>
               <TabsTrigger value="analytics" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2">
                 <BarChart3 className="h-4 w-4" />Analytics
               </TabsTrigger>
             </TabsList>
+
+            <TabsContent value="complaints"><AdminComplaints /></TabsContent>
 
             <TabsContent value="branches"><AdminBranchManagement /></TabsContent>
             <TabsContent value="groups"><AdminGroupManagement /></TabsContent>
