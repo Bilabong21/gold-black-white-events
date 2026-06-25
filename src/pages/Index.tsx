@@ -51,45 +51,62 @@ const Index = () => {
       </section>
 
       {/* Events */}
-      {events.length > 0 && (
-        <section className="py-16 bg-muted/30">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-foreground mb-4">Upcoming Events</h2>
-              <div className="w-24 h-1 bg-primary mx-auto mb-6 rounded-full"></div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {events.map((event) => (
-                <Card key={event.id} className="hover:shadow-xl transition-all duration-300 border-l-4 border-l-primary bg-card">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-xl font-semibold text-card-foreground">{event.title}</CardTitle>
-                      <span className="text-sm bg-primary text-primary-foreground px-3 py-1 rounded-full font-medium">
-                        {(event as any).church_groups?.name || 'General'}
-                      </span>
-                    </div>
-                    <CardDescription className="text-muted-foreground">{event.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      <div className="flex items-center text-card-foreground/80">
-                        <CalendarDays className="h-4 w-4 mr-2 text-primary" />
-                        <span>{new Date(event.event_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                      </div>
-                      <div className="flex items-center text-card-foreground/80">
-                        <Clock className="h-4 w-4 mr-2 text-primary" /><span>{event.event_time}</span>
-                      </div>
-                      <div className="flex items-center text-card-foreground/80">
-                        <MapPin className="h-4 w-4 mr-2 text-primary" /><span>{event.location}</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+      <section className="py-16 bg-muted/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-foreground mb-4">Upcoming Events</h2>
+            <div className="w-24 h-1 bg-primary mx-auto mb-6 rounded-full"></div>
+            <p className="text-muted-foreground">Events happening across all our branches and ministries</p>
           </div>
-        </section>
-      )}
+          {events.length === 0 ? (
+            <div className="text-center py-12">
+              <CalendarDays className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">No upcoming events at the moment. Check back soon!</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {events.map((event) => {
+                const groupName = (event as any).church_groups?.name;
+                const postedBy = event.contact_person;
+                return (
+                  <Card key={event.id} className="hover:shadow-xl transition-all duration-300 border-l-4 border-l-primary bg-card">
+                    <CardHeader>
+                      <div className="flex justify-between items-start gap-2">
+                        <CardTitle className="text-xl font-semibold text-card-foreground">{event.title}</CardTitle>
+                        <span className="text-sm bg-primary text-primary-foreground px-3 py-1 rounded-full font-medium whitespace-nowrap">
+                          {groupName || 'General'}
+                        </span>
+                      </div>
+                      <CardDescription className="text-muted-foreground">{event.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        <div className="flex items-center text-card-foreground/80">
+                          <CalendarDays className="h-4 w-4 mr-2 text-primary" />
+                          <span>{new Date(event.event_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                        </div>
+                        <div className="flex items-center text-card-foreground/80">
+                          <Clock className="h-4 w-4 mr-2 text-primary" /><span>{event.event_time}</span>
+                        </div>
+                        <div className="flex items-center text-card-foreground/80">
+                          <MapPin className="h-4 w-4 mr-2 text-primary" /><span>{event.location}</span>
+                        </div>
+                        <div className="flex items-center text-card-foreground/80 pt-2 border-t border-border mt-2">
+                          <Users className="h-4 w-4 mr-2 text-primary" />
+                          <span className="text-sm">
+                            Posted by <span className="font-semibold">{postedBy || 'Admin'}</span>
+                            {groupName && <> from <span className="font-semibold">{groupName}</span></>}
+                          </span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* Info */}
       <section className="py-16 bg-background">
