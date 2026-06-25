@@ -16,26 +16,32 @@ export type Database = {
     Tables: {
       branches: {
         Row: {
+          address: string | null
           city: string | null
           created_at: string
           id: string
           name: string
+          nearest_landmark: string | null
           province: string
           updated_at: string
         }
         Insert: {
+          address?: string | null
           city?: string | null
           created_at?: string
           id?: string
           name: string
+          nearest_landmark?: string | null
           province: string
           updated_at?: string
         }
         Update: {
+          address?: string | null
           city?: string | null
           created_at?: string
           id?: string
           name?: string
+          nearest_landmark?: string | null
           province?: string
           updated_at?: string
         }
@@ -129,6 +135,69 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "committee_members_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "church_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      complaints: {
+        Row: {
+          branch_id: string | null
+          category: string
+          created_at: string
+          email: string
+          full_name: string
+          group_id: string | null
+          id: string
+          message: string
+          phone: string | null
+          status: string
+          subject: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          branch_id?: string | null
+          category?: string
+          created_at?: string
+          email: string
+          full_name: string
+          group_id?: string | null
+          id?: string
+          message: string
+          phone?: string | null
+          status?: string
+          subject: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          branch_id?: string | null
+          category?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          group_id?: string | null
+          id?: string
+          message?: string
+          phone?: string | null
+          status?: string
+          subject?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "complaints_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "complaints_group_id_fkey"
             columns: ["group_id"]
             isOneToOne: false
             referencedRelation: "church_groups"
